@@ -72,7 +72,7 @@ export default function DashboardClient() {
             <LayoutDashboard className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">BevPulse Dashboard</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">SKU Prioritization Dashboard</h1>
             <p className="text-sm text-muted-foreground font-medium">Carbonated Beverage Product Analysis Engine</p>
           </div>
         </div>

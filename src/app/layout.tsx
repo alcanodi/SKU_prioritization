@@ -3,7 +3,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'BevPulse Dashboard',
+  title: 'SKU Prioritization Dashboard',
   description: 'Advanced carbonated beverage analytics and product prioritization engine',
 };
 
