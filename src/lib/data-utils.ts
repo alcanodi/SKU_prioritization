@@ -13,6 +13,32 @@ function generateMockData(count: number): ProductData[] {
     const category = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
     const prefix = PRODUCT_PREFIXES[Math.floor(Math.random() * PRODUCT_PREFIXES.length)];
     
+    // Generación de datos con tendencia (Riesgo vs Recompensa)
+    // Usamos una distribución que no sea puramente aleatoria para evitar el efecto "cuadrado"
+    let risk: number;
+    let reward: number;
+
+    const roll = Math.random();
+    
+    if (roll < 0.6) {
+      // Tendencia diagonal: productos estándar (correlación positiva riesgo/recompensa)
+      risk = Math.floor(Math.random() * 60) + 20; // 20-80
+      const baseReward = risk * 0.8;
+      reward = Math.min(100, Math.max(0, Math.floor(baseReward + (Math.random() * 30 - 15))));
+    } else if (roll < 0.8) {
+      // Cluster de "Estrellas": Bajo riesgo, Alta recompensa
+      risk = Math.floor(Math.random() * 25) + 5;
+      reward = Math.floor(Math.random() * 25) + 70;
+    } else if (roll < 0.95) {
+      // Cluster de "Riesgo": Alto riesgo, Recompensa media/baja
+      risk = Math.floor(Math.random() * 30) + 65;
+      reward = Math.floor(Math.random() * 40) + 10;
+    } else {
+      // Outliers totales
+      risk = Math.floor(Math.random() * 101);
+      reward = Math.floor(Math.random() * 101);
+    }
+    
     data.push({
       id: i.toString(),
       plant: PLANTS[Math.floor(Math.random() * PLANTS.length)],
@@ -20,8 +46,8 @@ function generateMockData(count: number): ProductData[] {
       package: PACKAGES[Math.floor(Math.random() * PACKAGES.length)],
       category: category,
       product: `${prefix} ${category}`,
-      reward: Math.floor(Math.random() * 101),
-      risk: Math.floor(Math.random() * 101),
+      reward: reward,
+      risk: risk,
       scaledProfit: Math.floor(Math.random() * 200000) + 5000,
     });
   }
