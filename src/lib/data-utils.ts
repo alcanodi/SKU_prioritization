@@ -13,30 +13,20 @@ function generateMockData(count: number): ProductData[] {
     const category = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
     const prefix = PRODUCT_PREFIXES[Math.floor(Math.random() * PRODUCT_PREFIXES.length)];
     
-    // Generación de datos con tendencia (Riesgo vs Recompensa)
-    // Usamos una distribución que no sea puramente aleatoria para evitar el efecto "cuadrado"
-    let risk: number;
-    let reward: number;
-
-    const roll = Math.random();
+    // Generación de datos para imitar el "spread" de la imagen:
+    // La mayoría de los puntos tienen baja recompensa (base densa)
+    // El riesgo está distribuido en todo el espectro
+    const risk = Math.floor(Math.random() * 101);
     
-    if (roll < 0.6) {
-      // Tendencia diagonal: productos estándar (correlación positiva riesgo/recompensa)
-      risk = Math.floor(Math.random() * 60) + 20; // 20-80
-      const baseReward = risk * 0.8;
-      reward = Math.min(100, Math.max(0, Math.floor(baseReward + (Math.random() * 30 - 15))));
-    } else if (roll < 0.8) {
-      // Cluster de "Estrellas": Bajo riesgo, Alta recompensa
-      risk = Math.floor(Math.random() * 25) + 5;
-      reward = Math.floor(Math.random() * 25) + 70;
-    } else if (roll < 0.95) {
-      // Cluster de "Riesgo": Alto riesgo, Recompensa media/baja
-      risk = Math.floor(Math.random() * 30) + 65;
-      reward = Math.floor(Math.random() * 40) + 10;
-    } else {
-      // Outliers totales
-      risk = Math.floor(Math.random() * 101);
-      reward = Math.floor(Math.random() * 101);
+    // Usamos una función exponencial inversa para concentrar puntos en la base
+    // reward = (random^3) * 100 asegura que la mayoría sean valores pequeños
+    let reward = Math.floor(Math.pow(Math.random(), 3) * 100);
+
+    // Añadimos "picos" ocasionales de alta recompensa para romper la uniformidad
+    if (Math.random() > 0.92) {
+      reward = Math.floor(Math.random() * 40) + 60; // Puntos altos (60-100)
+    } else if (Math.random() > 0.8) {
+      reward = Math.floor(Math.random() * 30) + 30; // Puntos medios (30-60)
     }
     
     data.push({
