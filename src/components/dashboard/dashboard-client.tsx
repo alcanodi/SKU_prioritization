@@ -1,9 +1,9 @@
 
 "use client";
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { MOCK_DATA, enrichWithPriority } from '@/lib/data-utils';
-import { Thresholds } from '@/lib/types';
+import { Thresholds, ProductData } from '@/lib/types';
 import { Slicer } from './slicers';
 import { ThresholdConfig } from './threshold-config';
 import { MetricsGrid } from './metrics-grid';
@@ -12,6 +12,9 @@ import { ProductTable } from './product-table';
 import { LayoutDashboard, Database, Activity, Map } from 'lucide-react';
 
 export default function DashboardClient() {
+  // Inicializamos con un array vacío para evitar discrepancias de hidratación entre servidor y cliente
+  const [data, setData] = useState<ProductData[]>([]);
+  
   const [thresholds, setThresholds] = useState<Thresholds>({
     rewardA: 80,
     rewardB: 50,
@@ -27,17 +30,22 @@ export default function DashboardClient() {
     priorities: [] as string[],
   });
 
+  // Cargamos los datos aleatorios solo después del montaje en el cliente
+  useEffect(() => {
+    setData(MOCK_DATA);
+  }, []);
+
   const uniqueValues = useMemo(() => ({
-    plants: Array.from(new Set(MOCK_DATA.map(d => d.plant))).sort(),
-    lines: Array.from(new Set(MOCK_DATA.map(d => d.line))).sort(),
-    packages: Array.from(new Set(MOCK_DATA.map(d => d.package))).sort(),
-    categories: Array.from(new Set(MOCK_DATA.map(d => d.category))).sort(),
+    plants: Array.from(new Set(data.map(d => d.plant))).sort(),
+    lines: Array.from(new Set(data.map(d => d.line))).sort(),
+    packages: Array.from(new Set(data.map(d => d.package))).sort(),
+    categories: Array.from(new Set(data.map(d => d.category))).sort(),
     priorities: ['AX', 'AY', 'AZ', 'BX', 'BY', 'BZ', 'CX', 'CY', 'CZ'],
-  }), []);
+  }), [data]);
 
   const enrichedData = useMemo(() => 
-    enrichWithPriority(MOCK_DATA, thresholds), 
-  [thresholds]);
+    enrichWithPriority(data, thresholds), 
+  [data, thresholds]);
 
   const filteredData = useMemo(() => {
     return enrichedData.filter(item => {
@@ -63,6 +71,10 @@ export default function DashboardClient() {
     setFilters(prev => ({ ...prev, [key]: [] }));
   };
 
+  const totalProfit = useMemo(() => 
+    filteredData.reduce((acc, curr) => acc + curr.scaledProfit, 0),
+  [filteredData]);
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col p-4 md:p-6 gap-6 max-w-[1600px] mx-auto overflow-x-hidden">
       {/* Header */}
@@ -85,7 +97,7 @@ export default function DashboardClient() {
           <div className="flex flex-col items-center">
             <span className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">Total Profit</span>
             <span className="text-lg font-bold text-accent">
-              ${(filteredData.reduce((acc, curr) => acc + curr.scaledProfit, 0) / 1000000).toFixed(2)}M
+              ${(totalProfit / 1000000).toFixed(2)}M
             </span>
           </div>
         </div>
