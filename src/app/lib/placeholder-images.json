@@ -1,0 +1,11 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "dashboard-hero",
+      "description": "Carbonated beverage production line",
+      "imageUrl": "https://picsum.photos/seed/bev1/1200/400",
+      "imageHint": "beverage factory"
+    }
+  ]
+}
