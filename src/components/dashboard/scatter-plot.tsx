@@ -11,17 +11,16 @@ interface ScatterPlotProps {
   thresholds: Thresholds;
 }
 
-// Colores basados en la imagen de referencia (Rojos, Naranjas, Púrpuras)
 const PRIORITY_COLORS: Record<string, string> = {
-  'AX': '#660000', // Marrón oscuro/Rojo (Alta Recompensa, Bajo Riesgo)
-  'AY': '#aa0000', // Rojo medio
-  'AZ': '#ee0000', // Rojo brillante
-  'BX': '#994400', // Naranja oscuro/Bronce (Media Recompensa)
-  'BY': '#ff7700', // Naranja
-  'BZ': '#ffbb88', // Naranja claro/Durazno
-  'CX': '#440044', // Púrpura oscuro (Baja Recompensa)
-  'CY': '#aa00aa', // Magenta
-  'CZ': '#ee88ee', // Rosa claro/Violeta
+  'AX': '#22c55e', // Verde (Alta Recompensa, Bajo Riesgo)
+  'AY': '#84cc16', 
+  'AZ': '#fbbf24', 
+  'BX': '#3b82f6', // Azul
+  'BY': '#6366f1', 
+  'BZ': '#a855f7', 
+  'CX': '#ef4444', // Rojo (Baja Recompensa)
+  'CY': '#f97316', 
+  'CZ': '#78716c', 
 };
 
 export function ScatterPlot({ data, thresholds }: ScatterPlotProps) {
@@ -30,7 +29,7 @@ export function ScatterPlot({ data, thresholds }: ScatterPlotProps) {
     name: item.product,
     x: item.risk,
     y: item.reward,
-    z: 15 // Puntos ligeramente más grandes como en la imagen
+    z: 10
   }));
 
   const CustomTooltip = ({ active, payload }: any) => {
@@ -55,27 +54,17 @@ export function ScatterPlot({ data, thresholds }: ScatterPlotProps) {
   };
 
   return (
-    <Card className="bg-card/50 border-primary/20 h-[600px] relative overflow-hidden">
-      {/* Leyenda estilo cuadro superior izquierda */}
-      <div className="absolute top-4 left-24 z-20 bg-background/90 border-2 border-foreground p-3 rounded-sm shadow-md grid grid-cols-2 gap-x-6 gap-y-1">
-        {Object.entries(PRIORITY_COLORS).map(([p, color]) => (
-          <div key={p} className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
-            <span className="text-[10px] font-bold text-foreground">{p}</span>
-          </div>
-        ))}
-      </div>
-
-      <CardHeader className="pb-0 pt-6">
+    <Card className="bg-card/50 border-primary/20 h-[600px]">
+      <CardHeader className="pb-0">
         <CardTitle className="text-sm font-semibold uppercase tracking-wider text-muted-foreground text-center">
-          Risk vs Reward Analysis (Scatter Distribution)
+          Risk vs Reward Analysis
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="h-full pb-16 pt-10">
+      <CardContent className="h-full pb-16 pt-6">
         <ResponsiveContainer width="100%" height="100%">
-          <ScatterChart margin={{ top: 20, right: 40, bottom: 20, left: 20 }}>
-            <CartesianGrid strokeDasharray="1 1" stroke="#333" />
+          <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#444" />
             <XAxis 
               type="number" 
               dataKey="x" 
@@ -98,21 +87,15 @@ export function ScatterPlot({ data, thresholds }: ScatterPlotProps) {
             >
               <Label value="Reward" angle={-90} position="insideLeft" offset={0} fill="#aaa" fontSize={12} fontWeight="bold" />
             </YAxis>
-            <ZAxis type="number" dataKey="z" range={[30, 30]} />
+            <ZAxis type="number" dataKey="z" range={[50, 50]} />
             
-            {/* Líneas de umbral sutiles */}
-            <ReferenceLine x={thresholds.riskX} stroke="#555" strokeDasharray="3 3" />
-            <ReferenceLine x={thresholds.riskY} stroke="#555" strokeDasharray="3 3" />
-            <ReferenceLine y={thresholds.rewardA} stroke="#555" strokeDasharray="3 3" />
-            <ReferenceLine y={thresholds.rewardB} stroke="#555" strokeDasharray="3 3" />
+            <ReferenceLine x={thresholds.riskX} stroke="#666" strokeDasharray="5 5" />
+            <ReferenceLine x={thresholds.riskY} stroke="#666" strokeDasharray="5 5" />
+            <ReferenceLine y={thresholds.rewardA} stroke="#666" strokeDasharray="5 5" />
+            <ReferenceLine y={thresholds.rewardB} stroke="#666" strokeDasharray="5 5" />
 
             <Tooltip content={<CustomTooltip />} />
-            <Scatter 
-              name="Products" 
-              data={chartData} 
-              isAnimationActive={true}
-              animationDuration={1000}
-            >
+            <Scatter name="Products" data={chartData}>
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={PRIORITY_COLORS[entry.priority] || '#888'} />
               ))}

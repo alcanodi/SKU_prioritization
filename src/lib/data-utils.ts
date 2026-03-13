@@ -13,22 +13,18 @@ function generateMockData(count: number): ProductData[] {
     const category = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
     const prefix = PRODUCT_PREFIXES[Math.floor(Math.random() * PRODUCT_PREFIXES.length)];
     
-    // Generación de datos para imitar el "spread" de la imagen:
-    // La mayoría de los puntos tienen baja recompensa (base densa)
-    // El riesgo está distribuido en todo el espectro
+    // Generación de datos con tendencia diagonal (Correlación Riesgo/Recompensa)
     const risk = Math.floor(Math.random() * 101);
+    // La recompensa tiende a subir con el riesgo (tendencia diagonal), con algo de ruido
+    let reward = Math.floor(Math.random() * 0.6 * risk + Math.random() * 40);
     
-    // Usamos una función exponencial inversa para concentrar puntos en la base
-    // reward = (random^3) * 100 asegura que la mayoría sean valores pequeños
-    let reward = Math.floor(Math.pow(Math.random(), 3) * 100);
-
-    // Añadimos "picos" ocasionales de alta recompensa para romper la uniformidad
+    // Casos especiales (outliers estratégicos)
     if (Math.random() > 0.92) {
-      reward = Math.floor(Math.random() * 40) + 60; // Puntos altos (60-100)
-    } else if (Math.random() > 0.8) {
-      reward = Math.floor(Math.random() * 30) + 30; // Puntos medios (30-60)
+      reward = Math.floor(Math.random() * 30) + 70; // Alta recompensa independientemente del riesgo
     }
     
+    if (reward > 100) reward = 100;
+
     data.push({
       id: i.toString(),
       plant: PLANTS[Math.floor(Math.random() * PLANTS.length)],
